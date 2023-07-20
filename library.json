@@ -1,0 +1,22 @@
+{
+    "name": "ESPFileServer",
+    "keywords": "server, Files, LittleFS, SPIFFS, ESP32, webpage, wireless",
+    "description": "ESPFileServer creates a webpage to manage files on the esp via a browser.",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/noranraskin/ESPFileServer.git"
+    },
+    "authors":
+    [
+      {
+        "name": "Noran Raskin",
+        "url": "https://github.com/noranraskin",
+        "email": "dev@noranraskin.com",
+        "maintainer": true
+      }
+    ],
+    "version": "1.0.0",
+    "frameworks": "arduino",
+    "platforms": "espressif"
+  }
