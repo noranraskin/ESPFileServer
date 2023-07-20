@@ -10,5 +10,13 @@
 #endif
 
 
+class ESPFileServerClass {
+    public:
+        void begin(AsyncWebServer *server, const char* url = "/files");
+    private:
+        AsyncWebServer *_server;
+};
+
+extern ESPFileServerClass FileServer;
 
 #endif
