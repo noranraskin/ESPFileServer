@@ -69,6 +69,21 @@ void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
         }
     });
 
+    _server->on("/espfileserver-delete-file", HTTP_DELETE, [](AsyncWebServerRequest *request) {
+        if (request->hasParam("file")) {
+            String file = request->getParam("file")->value();
+            if (FS.exists(file)) {
+                FS.remove(file);
+                request->send(200, "text/plain", "File deleted");
+                return;
+            } else {
+                request->send(404, "text/plain", "File not found");
+            }
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
+    });
+
     _server->serveStatic("/", FS, "/").setDefaultFile("index.html");
 }
 
