@@ -52,6 +52,23 @@ void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
         request->send(200, "text/plain", info);
     });
 
+    _server->on("/espfileserver-download-file", HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (request->hasParam("file")) {
+            String file = request->getParam("file")->value();
+            if (FS.exists(file)) {
+                AsyncResponseStream * response = request->beginResponseStream("text/plain");
+                File f = FS.open(file, "r");
+                response->print(f.readString());
+                request->send(response);
+                return;
+            } else {
+                request->send(404, "text/plain", "File not found");
+            }
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
+    });
+
     _server->serveStatic("/", FS, "/").setDefaultFile("index.html");
 }
 
