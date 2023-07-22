@@ -16,9 +16,7 @@ using namespace fs;
 void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
     FS.begin();
     _server = server;
-    // _server->on(url, HTTP_GET, [](AsyncWebServerRequest *request) {
-    //     request->send(SPIFFS, request->url());
-    // });
+
     _server->on("/espfileserver-format-fs", HTTP_POST, [](AsyncWebServerRequest *request) {
         if (request->hasParam("format")) {
             if (request->getParam("format")->value() == "true") {
