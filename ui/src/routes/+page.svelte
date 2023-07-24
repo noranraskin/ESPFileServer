@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Folder from './Folder.svelte';
 	import FolderIcon from './FolderIcon.svelte';
+	var currentYear = new Date().getFullYear();
 
 	let root = [
 		{
@@ -55,4 +56,17 @@
 	</div>
 </div>
 
-<Folder name="/" size="" files={root} expanded />
+<div class="flex grow flex-col">
+	<div>
+		<Folder name="/" size="" files={root} expanded />
+	</div>
+	<div class="flex grow" />
+	<div class="flex flex-col p-3 items-center">
+		<div>
+			Icons by <a href="https://iconoir.com/">Iconoir</a>.
+		</div>
+		<div>
+			© {currentYear} Noran Raskin.
+		</div>
+	</div>
+</div>
