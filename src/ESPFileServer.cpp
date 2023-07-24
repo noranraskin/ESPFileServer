@@ -1,6 +1,7 @@
 #include "ESPFileServer.h"
-#include <Arduino.h>
-#include <FS.h>
+#include <Arduino.h> // Built-in
+#include <FS.h> // Built-in
+#include <ArduinoJson.h> // Built-in
 
 #define USE_LITTLEFS // or #define USE_SPIFFS
 #ifdef USE_LITTLEFS
@@ -11,35 +12,60 @@
     #define FS SPIFFS
 #endif
 
-using namespace fs;
+int iterateFiles(File * fp, JsonArray &json, String path = "") {
+    File file = fp->openNextFile();
+    int totalsize = 0;
+    while (file) {
+        JsonObject obj = json.createNestedObject();
+        obj["name"] = String(file.name());
+        if (file.isDirectory()) {
+            String dirname = path + "/" + String(file.name());
+            File newRoot = FS.open(dirname);
+            if (!newRoot) {
+                Serial.println("Failed to open directory");
+            }
+            JsonArray files = obj.createNestedArray("files");
+            int dirsize = iterateFiles(&newRoot, files, dirname);
+            obj["size"] = dirsize;
+            totalsize += dirsize;
+        } else {
+            obj["size"] = file.size();
+            totalsize += file.size();
+        }
+        file = fp->openNextFile();
+    }
+    return totalsize;
+}
 
 void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
     FS.begin();
     _server = server;
 
     _server->on("/espfileserver-format-fs", HTTP_POST, [](AsyncWebServerRequest *request) {
+        Serial.println("Got request to format FS");
         if (request->hasParam("format")) {
             if (request->getParam("format")->value() == "true") {
                 request->send(200, "text/plain", "Formatting FS...");
                 FS.format();
+                return;
             }
         }
+        request->send(400, "text/plain", "Bad request");
     });
+
     _server->on("/espfileserver-get-list-of-all-files", HTTP_GET, [](AsyncWebServerRequest *request) {
-        String files = "";
+        Serial.println("Got request to get list of all files");
         File root = FS.open("/");
-        File file = root.openNextFile();
-        while (file) {
-            if (!file.isDirectory()) {
-                files += file.name();
-                files += "\n";
-            }
-            file = root.openNextFile();
-        }
-        request->send(200, "text/plain", files);
+        AsyncResponseStream * response = request->beginResponseStream("application/json");
+        DynamicJsonDocument obj(1024);
+        JsonArray json = obj.to<JsonArray>();
+        iterateFiles(&root, json);
+        serializeJson(json, *response);
+        request->send(response);
     });
 
     _server->on("/espfileserver-get-fs-info", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Got request to get FS info");
         String info = "";
         info += "Total Bytes: ";
         info += FS.totalBytes();
@@ -51,6 +77,7 @@ void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
     });
 
     _server->on("/espfileserver-download-file", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Got request to download file");
         if (request->hasParam("file")) {
             String file = request->getParam("file")->value();
             if (FS.exists(file)) {
@@ -68,6 +95,7 @@ void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
     });
 
     _server->on("/espfileserver-delete-file", HTTP_DELETE, [](AsyncWebServerRequest *request) {
+        Serial.println("Got request to delete file");
         if (request->hasParam("file")) {
             String file = request->getParam("file")->value();
             if (FS.exists(file)) {
