@@ -68,6 +68,31 @@ void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
     //         request->send(404, "text/plain", "File not found");
     //     }
     // });
+    
+    _server->on("/espfileserver-move-file", HTTP_POST, [](AsyncWebServerRequest * request) {
+        Serial.println("Got request to move file");
+        if (request->hasParam("from") && request->hasParam("to")) {
+            String from = request->getParam("from")->value();
+            if (from[0] != '/') {from = "/" + from;}
+            String to = request->getParam("to")->value();
+            if (to[0] != '/') {to = "/" + to;}
+            if (FS.exists(from)) {
+                if (FS.rename(from, to)) {
+                    request->send(200, "text/plain", "File moved");
+                    return;
+                } else {
+                    request->send(500, "text/plain", "Failed to move file");
+                    return;
+                }
+            } else {
+                request->send(404, "text/plain", "File not found");
+                return;
+            }
+        } else {
+            request->send(400, "text/plain", "Bad request");
+            return;
+        }
+    });
 
     _server->on("/espfileserver-delete-file", HTTP_DELETE, [](AsyncWebServerRequest *request) {
         Serial.println("Got request to delete file");

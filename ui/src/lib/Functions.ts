@@ -1,8 +1,11 @@
+// const hostURL = window.location.host;
+// const hostURL = "http://localhost:8080";
+const hostURL = "http://10.10.20.159";
 
 
 export function downloadFile(path: string, filename: string) {
     // const url = window.location.host + "/espfileserver-download-file" + path + "/" + filename;
-    const url = "http://10.10.20.159" + "/espfileserver-download-file" + (path == '/' ? "" : path) + "/" + filename;
+    const url = hostURL + "/espfileserver-download-file" + (path == '/' ? "" : path) + "/" + filename;
     fetch(url)
         .then(response => response.blob())
         .then(blob => {
@@ -25,3 +28,11 @@ export function downloadFile(path: string, filename: string) {
 //         downloadFile(path, name);
 //     }
 // }
+
+export function renameFile(oldPath: string, newPath: string) {
+    const url = hostURL + "/espfileserver-move-file?from=" + oldPath + "&to=" + newPath;
+    fetch(url, { method: 'POST' })
+        .then(response => {
+            response.ok ? console.log("File renamed") : alert("Error renaming file");
+        })
+}

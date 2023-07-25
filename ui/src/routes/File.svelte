@@ -3,6 +3,7 @@
 	import DownloadIcon from '$lib/DownloadIcon.svelte';
 	import RenameIcon from '$lib/RenameIcon.svelte';
 	import { downloadFile } from '$lib/Functions';
+	import Name from './Name.svelte';
 
 	export let name: string;
 	export let path: string;
@@ -10,9 +11,9 @@
 	$: type = name.slice(name.lastIndexOf('.') + 1);
 </script>
 
-<main class="flex flex-row">
+<main class="flex flex-row hover:bg-slate-100 pl-4">
 	<div class="grow">
-		{name}
+		<Name {name} {path} />
 	</div>
 	<div class="pr-4">
 		{size}
