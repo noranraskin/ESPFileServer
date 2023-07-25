@@ -13,6 +13,7 @@ void setup() {
     Serial.println(WiFi.localIP());
     // ESPFileServer is accessible at "<IP Address>/files" in browser
     FileServer.begin(&server);
+    DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
     server.begin();
 }
 

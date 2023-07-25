@@ -5,8 +5,11 @@
 
 #if defined(ESP32)
     #define HARDWARE "ESP32"
-    #include <WiFi.h> // Built-in
-    #include <ESPAsyncWebServer.h> // https://github.com/me-no-dev/ESPAsyncWebServer
+    #include <Arduino.h>            // Built-in
+    #include <ArduinoJson.h>        // Built-in
+    #include <FS.h>                 // Built-in
+    #include <WiFi.h>               // Built-in
+    #include <ESPAsyncWebServer.h>  // https://github.com/me-no-dev/ESPAsyncWebServer
 #endif
 
 

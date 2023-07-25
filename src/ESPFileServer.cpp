@@ -1,7 +1,4 @@
 #include "ESPFileServer.h"
-#include <Arduino.h> // Built-in
-#include <FS.h> // Built-in
-#include <ArduinoJson.h> // Built-in
 
 #define USE_LITTLEFS // or #define USE_SPIFFS
 #ifdef USE_LITTLEFS
@@ -12,30 +9,8 @@
     #define FS SPIFFS
 #endif
 
-int iterateFiles(File * fp, JsonArray &json, String path = "") {
-    File file = fp->openNextFile();
-    int totalsize = 0;
-    while (file) {
-        JsonObject obj = json.createNestedObject();
-        obj["name"] = String(file.name());
-        if (file.isDirectory()) {
-            String dirname = path + "/" + String(file.name());
-            File newRoot = FS.open(dirname);
-            if (!newRoot) {
-                Serial.println("Failed to open directory");
-            }
-            JsonArray files = obj.createNestedArray("files");
-            int dirsize = iterateFiles(&newRoot, files, dirname);
-            obj["size"] = dirsize;
-            totalsize += dirsize;
-        } else {
-            obj["size"] = file.size();
-            totalsize += file.size();
-        }
-        file = fp->openNextFile();
-    }
-    return totalsize;
-}
+int iterateFiles(File *, JsonArray &, String = "");
+
 
 void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
     FS.begin();
@@ -76,23 +51,23 @@ void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
         request->send(200, "text/plain", info);
     });
 
-    _server->on("/espfileserver-download-file", HTTP_GET, [](AsyncWebServerRequest *request) {
-        Serial.println("Got request to download file");
-        if (request->hasParam("file")) {
-            String file = request->getParam("file")->value();
-            if (FS.exists(file)) {
-                AsyncResponseStream * response = request->beginResponseStream("text/plain");
-                File f = FS.open(file, "r");
-                response->print(f.readString());
-                request->send(response);
-                return;
-            } else {
-                request->send(404, "text/plain", "File not found");
-            }
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
+    // _server->on("/espfileserver-download-file", HTTP_GET, [](AsyncWebServerRequest *request) {
+    //     Serial.println("Got request to download file");
+    //     if (request->hasParam("file")) {
+    //         String file = request->getParam("file")->value();
+    //         if (FS.exists(file)) {
+    //             AsyncResponseStream * response = request->beginResponseStream("text/plain");
+    //             File f = FS.open(file, "r");
+    //             response->print(f.readString());
+    //             request->send(response);
+    //             return;
+    //         } else {
+    //             request->send(404, "text/plain", "File not found");
+    //         }
+    //     } else {
+    //         request->send(404, "text/plain", "File not found");
+    //     }
+    // });
 
     _server->on("/espfileserver-delete-file", HTTP_DELETE, [](AsyncWebServerRequest *request) {
         Serial.println("Got request to delete file");
@@ -110,7 +85,33 @@ void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
         }
     });
 
-    _server->serveStatic("/", FS, "/").setDefaultFile("index.html");
+    _server->serveStatic("/espfileserver-download-file", FS, "/");
+}
+
+int iterateFiles(File * fp, JsonArray &json, String path) {
+    File file = fp->openNextFile();
+    int totalsize = 0;
+    while (file) {
+        JsonObject obj = json.createNestedObject();
+        obj["name"] = String(file.name());
+        if (file.isDirectory()) {
+            String dirname = path + "/" + String(file.name());
+            File newRoot = FS.open(dirname);
+            if (!newRoot) {
+                Serial.println("Failed to open directory");
+            }
+            JsonArray files = obj.createNestedArray("files");
+            int dirsize = iterateFiles(&newRoot, files, dirname);
+            obj["size"] = dirsize;
+            totalsize += dirsize;
+        } else {
+            obj["size"] = file.size();
+            totalsize += file.size();
+        }
+        file = fp->openNextFile();
+    }
+    return totalsize;
 }
 
 ESPFileServerClass FileServer;
+
