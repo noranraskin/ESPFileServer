@@ -3,8 +3,8 @@
 </script>
 
 <svg
-	width="24px"
-	height="24px"
+	width="20px"
+	height="20px"
 	stroke-width="1.5"
 	viewBox="0 0 24 24"
 	fill="none"

@@ -51,7 +51,7 @@
 
 <div class="flex justify-center p-5">
 	<div class="flex flex-row justify-self-center">
-		<FolderIcon />
+		<FolderIcon width={100} />
 		<h1 class="font-bold self-center text-4xl px-8">ESPFileServer</h1>
 	</div>
 </div>

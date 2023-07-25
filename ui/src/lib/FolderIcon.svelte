@@ -1,10 +1,11 @@
 <script>
 	export let stroke_width = 1.5;
+	export let width = 20;
 </script>
 
 <svg
-	width="100px"
-	height="100px"
+	{width}
+	height={width}
 	stroke-width="1.5"
 	viewBox="0 0 24 24"
 	fill="none"

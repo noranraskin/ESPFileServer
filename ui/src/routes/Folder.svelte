@@ -1,9 +1,6 @@
 <script lang="ts">
 	import File from './File.svelte';
-	import DeleteIcon from '$lib/DeleteIcon.svelte';
-	import DownloadIcon from '$lib/DownloadIcon.svelte';
-	import RenameIcon from '$lib/RenameIcon.svelte';
-	import Name from './Name.svelte';
+	import Item from './Item.svelte';
 	// import { downloadFolder } from '$lib/Functions';
 
 	export let expanded = true;
@@ -18,36 +15,17 @@
 	}
 </script>
 
-<main class="font-bold flex-row flex hover:bg-slate-200">
+<main class="font-bold flex-col flex hover:bg-slate-200">
 	{#if name != ''}
-		<button class="bg-slate-200 px-1" on:click={toggle}>
-			<Name {name} {path} />
-		</button>
-		<div class="grow" />
-		<div class="pr-4">{size}</div>
-		<div class="pr-4">
-			<button
-				on:click={() => {
-					// downloadFolder({ name: name, files: files }, path);
-				}}
-			>
-				<DownloadIcon stroke_width={2.5} />
-			</button>
-		</div>
-		<div class="pr-4">
-			<RenameIcon stroke_width={2.5} />
-		</div>
-		<div class="pr-10">
-			<DeleteIcon stroke_width={2.5} />
-		</div>
+		<Item {name} {path} {size} type={'folder'} iconFunction={toggle} />
 	{/if}
 </main>
 {#if expanded}
 	<ul class="right-4 border border-slate-300">
 		{#each files as file}
-			<li class="py-1">
+			<li class="py-1 pl-4">
 				{#if file.files}
-					<div class="pl-4">
+					<div class="">
 						<svelte:self {...file} path={newPath} />
 					</div>
 				{:else}
