@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Folder from './Folder.svelte';
-	import FolderIcon from './FolderIcon.svelte';
+	import FolderIcon from '$lib/FolderIcon.svelte';
 	var currentYear = new Date().getFullYear();
 
 	let root = [
@@ -58,7 +58,7 @@
 
 <div class="flex grow flex-col">
 	<div>
-		<Folder name="/" size="" files={root} expanded />
+		<Folder name="" size="" files={root} path="" />
 	</div>
 	<div class="flex grow" />
 	<div class="flex flex-col p-3 items-center">

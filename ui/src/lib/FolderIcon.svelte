@@ -1,3 +1,7 @@
+<script>
+	export let stroke_width = 1.5;
+</script>
+
 <svg
 	width="100px"
 	height="100px"
@@ -9,7 +13,7 @@
 	><path
 		d="M2 11V4.6a.6.6 0 01.6-.6h6.178a.6.6 0 01.39.144l3.164 2.712a.6.6 0 00.39.144H21.4a.6.6 0 01.6.6V11M2 11v8.4a.6.6 0 00.6.6h18.8a.6.6 0 00.6-.6V11M2 11h20"
 		stroke="#000000"
-		stroke-width="1.5"
+		stroke-width={stroke_width}
 		stroke-linecap="round"
 		stroke-linejoin="round"
 	/>
