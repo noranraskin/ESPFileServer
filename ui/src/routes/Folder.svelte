@@ -1,6 +1,7 @@
 <script lang="ts">
 	import File from './File.svelte';
 	import Item from './Item.svelte';
+	import { itemUnderCursor, draggedItemName, draggedItemPath, isMoving } from '$lib/Functions';
 	// import { downloadFolder } from '$lib/Functions';
 
 	export let expanded = true;
@@ -8,6 +9,9 @@
 	export let size: string;
 	export let files: Array<any>;
 	export let path: string;
+
+	$: isHovering = $itemUnderCursor[$itemUnderCursor.length - 1] == name && $isMoving;
+	$: hideChildren = $draggedItemName == name && $draggedItemPath == path && name != '' && $isMoving;
 	let newPath = (path == '/' ? path : path + '/') + name;
 
 	function toggle() {
@@ -16,17 +20,21 @@
 </script>
 
 <main
-	on:mouseover={() => {
-		// console.log(name);
+	on:mouseenter={() => {
+		$itemUnderCursor = [...$itemUnderCursor, name];
 	}}
-	on:focus={() => {}}
+	on:mouseleave={() => {
+		$itemUnderCursor.splice($itemUnderCursor.indexOf(name), 1);
+		$itemUnderCursor = [...$itemUnderCursor];
+	}}
+	class={isHovering ? 'bg-gray-100' : ''}
 >
 	<div class="font-bold flex-col flex hover:bg-slate-200">
 		{#if name != ''}
 			<Item {name} {path} {size} type={'folder'} iconFunction={toggle} />
 		{/if}
 	</div>
-	{#if expanded}
+	{#if expanded && !hideChildren}
 		<ul class="right-4 border-y border-l rounded-sm">
 			{#each files as file}
 				<li class="py-1 pl-4">
@@ -35,7 +43,9 @@
 							<svelte:self {...file} path={newPath} />
 						</div>
 					{:else}
-						<File {...file} path={newPath} />
+						<div class="">
+							<File {...file} path={newPath} />
+						</div>
 					{/if}
 				</li>
 			{/each}

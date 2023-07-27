@@ -5,7 +5,6 @@
 	let isEditable = false;
 	let newName: string;
 	let inputRef: HTMLInputElement;
-	$: type = name.slice(name.lastIndexOf('.') + 1);
 
 	function saveChanges() {
 		if (newName != name) {

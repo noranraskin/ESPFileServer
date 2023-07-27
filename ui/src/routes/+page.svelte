@@ -1,67 +1,77 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { loadListOfFiles, updateFSInfo } from '$lib/Functions';
+	import {
+		isMoving,
+		loadListOfFiles,
+		updateFSInfo,
+		itemUnderCursor,
+		renameFile
+	} from '$lib/Functions';
 	import Folder from './Folder.svelte';
 	import FolderIcon from '$lib/FolderIcon.svelte';
 	import AvailableSpaceBar from './AvailableSpaceBar.svelte';
 	var currentYear = new Date().getFullYear();
 	import { FS } from '$lib/Functions';
+	import {
+		isDragging,
+		draggedItem,
+		dragOffsetX,
+		dragOffsetY,
+		draggedItemName,
+		draggedItemPath
+	} from '$lib/Functions';
 
-	// let root = [
-	// 	{
-	// 		name: 'excel',
-	// 		size: '5 KB',
-	// 		files: [
-	// 			{
-	// 				name: 'sheet.xlsx',
-	// 				size: '5 KB'
-	// 			}
-	// 		]
-	// 	},
-	// 	{
-	// 		name: 'other',
-	// 		size: '3 MB',
-	// 		files: [
-	// 			{
-	// 				name: 'logs',
-	// 				size: '1.3 MB',
-	// 				files: [
-	// 					{
-	// 						name: 'errors.log',
-	// 						size: '31 KB'
-	// 					},
-	// 					{
-	// 						name: 'latest.log',
-	// 						size: '1.2 MB'
-	// 					}
-	// 				]
-	// 			},
-	// 			{
-	// 				name: 'pics',
-	// 				size: '1 MB',
-	// 				files: [
-	// 					{ name: 'img.gif', size: '32 KB' },
-	// 					{ name: 'logo.png', size: '875 KB' }
-	// 				]
-	// 			},
-	// 			{ name: 'text.txt', size: '2 KB' },
-	// 			{ name: 'archive.tar.gz', size: '7 KB' },
-	// 			{ name: 'script.pdf', size: '1.3 MB' }
-	// 		]
-	// 	},
-	// 	{ name: 'TODO.md', size: '6 KB' }
-	// ];
 	onMount(() => {
 		try {
 			loadListOfFiles();
-			updateFSInfo();
 		} catch (error) {
 			console.log(error);
 		}
 	});
+
+	function handleMouseMove(event: MouseEvent) {
+		if ($isDragging) {
+			const deltaX = event.clientX - $dragOffsetX;
+			const deltaY = event.clientY - $dragOffsetY;
+			$isMoving = true;
+			if ($draggedItem) {
+				const $draggedItemTyped = $draggedItem as HTMLElement;
+				$draggedItemTyped.style.transform = 'translate(0, 0)';
+				$draggedItemTyped.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+				$draggedItemTyped.style.pointerEvents = 'none';
+				$draggedItemTyped.style.opacity = '0.5';
+			}
+		}
+	}
+
+	function handleMouseUp(event: MouseEvent) {
+		if ($isDragging) {
+			if ($draggedItem) {
+				const $draggedItemTyped = $draggedItem as HTMLElement;
+				$draggedItemTyped.style.transform = 'translate(0, 0)';
+				$draggedItemTyped.style.pointerEvents = 'auto';
+				$draggedItemTyped.style.opacity = '1';
+			}
+			let newPath = $itemUnderCursor.join('/') + '/' + $draggedItemName;
+			let oldPath: string;
+			if ($draggedItemPath == '/') {
+				oldPath = '/' + $draggedItemName;
+			} else {
+				oldPath = $draggedItemPath + '/' + $draggedItemName;
+			}
+			if (newPath != oldPath) {
+				renameFile(oldPath, newPath);
+			}
+			$isDragging = false;
+			$draggedItem = null;
+			$draggedItemName = '';
+			$draggedItemPath = '';
+			$isMoving = false;
+		}
+	}
 </script>
 
-<main class="flex-col">
+<main class="flex-col" on:mousemove={handleMouseMove} on:mouseup={handleMouseUp} aria-hidden="true">
 	<div class="flex justify-center p-5">
 		<div class="flex flex-row justify-self-center">
 			<FolderIcon width={100} />

@@ -2,6 +2,14 @@ import { writable } from "svelte/store";
 
 export const totalBytes = writable(0);
 export const usedBytes = writable(0);
+export const isDragging = writable(false);
+export const dragOffsetX = writable(0);
+export const dragOffsetY = writable(0);
+export const draggedItem = writable(null);
+export const isMoving = writable(false);
+export const itemUnderCursor = writable<Array<string>>([]);
+export const draggedItemPath = writable("");
+export const draggedItemName = writable("");
 export const FS = writable<Array<object>>([]);
 
 // const hostURL = window.location.host;
@@ -41,6 +49,7 @@ export function loadListOfFiles() {
         .then(response => response.json())
         .then(data => {
             FS.set(data);
+            updateFSInfo();
         })
 }
 
@@ -49,6 +58,7 @@ export function renameFile(oldPath: string, newPath: string) {
     fetch(url, { method: 'POST' })
         .then(response => {
             response.ok ? console.log("File renamed") : alert("Error renaming file");
+            loadListOfFiles();
         })
 }
 
