@@ -5,12 +5,15 @@ The ESP File Server creates an easy way to manage filesystems on the ESP32 and b
 ## Features
  - [x] Works with Async Web Server
  - [x] Works with LittleFS
- - [ ] Browse files from your browser
- - [ ] Upload files
+ - [x] Browse files from your browser
+ - [x] Move files and folders via drag and drop
+ - [x] Display file and folder sizes
+ - [ ] Upload files via drag and drop
  - [ ] Delete files
- - [ ] Rename files
- - [ ] Format the SPIFFS or LittleFS filesystem
- - [ ] Register static file server
+ - [x] Rename files and folders by double clicking
+ - [ ] Create new files and folders
+ - [ ] Preview files
+ - [ ] Format the filesystem
 
 ## Installation
 

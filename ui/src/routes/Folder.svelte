@@ -15,23 +15,30 @@
 	}
 </script>
 
-<main class="font-bold flex-col flex hover:bg-slate-200">
-	{#if name != ''}
-		<Item {name} {path} {size} type={'folder'} iconFunction={toggle} />
+<main
+	on:mouseover={() => {
+		// console.log(name);
+	}}
+	on:focus={() => {}}
+>
+	<div class="font-bold flex-col flex hover:bg-slate-200">
+		{#if name != ''}
+			<Item {name} {path} {size} type={'folder'} iconFunction={toggle} />
+		{/if}
+	</div>
+	{#if expanded}
+		<ul class="right-4 border-y border-l rounded-sm">
+			{#each files as file}
+				<li class="py-1 pl-4">
+					{#if file.files}
+						<div class="">
+							<svelte:self {...file} path={newPath} />
+						</div>
+					{:else}
+						<File {...file} path={newPath} />
+					{/if}
+				</li>
+			{/each}
+		</ul>
 	{/if}
 </main>
-{#if expanded}
-	<ul class="right-4 border border-slate-300">
-		{#each files as file}
-			<li class="py-1 pl-4">
-				{#if file.files}
-					<div class="">
-						<svelte:self {...file} path={newPath} />
-					</div>
-				{:else}
-					<File {...file} path={newPath} />
-				{/if}
-			</li>
-		{/each}
-	</ul>
-{/if}

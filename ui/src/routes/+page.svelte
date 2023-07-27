@@ -49,24 +49,26 @@
 	];
 </script>
 
-<div class="flex justify-center p-5">
-	<div class="flex flex-row justify-self-center">
-		<FolderIcon width={100} />
-		<h1 class="font-bold self-center text-4xl px-8">ESPFileServer</h1>
+<main class="flex-col">
+	<div class="flex justify-center p-5">
+		<div class="flex flex-row justify-self-center">
+			<FolderIcon width={100} />
+			<h1 class="font-bold self-center text-4xl px-8">ESPFileServer</h1>
+		</div>
 	</div>
-</div>
 
-<div class="flex grow flex-col">
-	<div>
-		<Folder name="" size="" files={root} path="" />
-	</div>
-	<div class="flex grow" />
-	<div class="flex flex-col p-3 items-center">
-		<div>
-			Icons by <a href="https://iconoir.com/">Iconoir</a>.
+	<div class="flex flex-col">
+		<div class="w-5/6 m-auto border-r">
+			<Folder name="" size="" files={root} path="" />
 		</div>
-		<div>
-			© {currentYear} Noran Raskin.
+		<div class="flex grow" />
+		<div class="flex flex-col p-3 items-center pt-10">
+			<div>
+				Icons by <a href="https://iconoir.com/">Iconoir</a>.
+			</div>
+			<div>
+				© {currentYear} Noran Raskin.
+			</div>
 		</div>
 	</div>
-</div>
+</main>
