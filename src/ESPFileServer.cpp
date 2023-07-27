@@ -41,14 +41,13 @@ void ESPFileServerClass::begin(AsyncWebServer *server, const char* url) {
 
     _server->on("/espfileserver-get-fs-info", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Got request to get FS info");
-        String info = "";
-        info += "Total Bytes: ";
-        info += FS.totalBytes();
-        info += "\n";
-        info += "Used Bytes: ";
-        info += FS.usedBytes();
-        info += "\n";
-        request->send(200, "text/plain", info);
+        AsyncResponseStream * response = request->beginResponseStream("application/json");
+        DynamicJsonDocument obj(100);
+        JsonObject json = obj.to<JsonObject>();
+        json["totalBytes"] = FS.totalBytes();
+        json["usedBytes"] = FS.usedBytes();
+        serializeJson(json, *response);
+        request->send(response);
     });
 
     // _server->on("/espfileserver-download-file", HTTP_GET, [](AsyncWebServerRequest *request) {

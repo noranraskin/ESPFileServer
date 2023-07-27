@@ -1,3 +1,9 @@
+import { writable } from "svelte/store";
+
+export const totalBytes = writable(0);
+export const usedBytes = writable(0);
+export const FS = writable<Array<object>>([]);
+
 // const hostURL = window.location.host;
 // const hostURL = "http://localhost:8080";
 const hostURL = "http://10.10.20.159";
@@ -29,10 +35,29 @@ export function downloadFile(path: string, filename: string) {
 //     }
 // }
 
+export function loadListOfFiles() {
+    const url = hostURL + "/espfileserver-get-list-of-all-files";
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            FS.set(data);
+        })
+}
+
 export function renameFile(oldPath: string, newPath: string) {
     const url = hostURL + "/espfileserver-move-file?from=" + oldPath + "&to=" + newPath;
     fetch(url, { method: 'POST' })
         .then(response => {
             response.ok ? console.log("File renamed") : alert("Error renaming file");
+        })
+}
+
+export function updateFSInfo() {
+    const url = hostURL + "/espfileserver-get-fs-info";
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            totalBytes.set(data.totalBytes);
+            usedBytes.set(data.usedBytes);
         })
 }

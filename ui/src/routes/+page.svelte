@@ -1,52 +1,64 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { loadListOfFiles, updateFSInfo } from '$lib/Functions';
 	import Folder from './Folder.svelte';
 	import FolderIcon from '$lib/FolderIcon.svelte';
+	import AvailableSpaceBar from './AvailableSpaceBar.svelte';
 	var currentYear = new Date().getFullYear();
+	import { FS } from '$lib/Functions';
 
-	let root = [
-		{
-			name: 'excel',
-			size: '5 KB',
-			files: [
-				{
-					name: 'sheet.xlsx',
-					size: '5 KB'
-				}
-			]
-		},
-		{
-			name: 'other',
-			size: '3 MB',
-			files: [
-				{
-					name: 'logs',
-					size: '1.3 MB',
-					files: [
-						{
-							name: 'errors.log',
-							size: '31 KB'
-						},
-						{
-							name: 'latest.log',
-							size: '1.2 MB'
-						}
-					]
-				},
-				{
-					name: 'pics',
-					size: '1 MB',
-					files: [
-						{ name: 'img.gif', size: '32 KB' },
-						{ name: 'logo.png', size: '875 KB' }
-					]
-				},
-				{ name: 'text.txt', size: '2 KB' },
-				{ name: 'archive.tar.gz', size: '7 KB' },
-				{ name: 'script.pdf', size: '1.3 MB' }
-			]
-		},
-		{ name: 'TODO.md', size: '6 KB' }
-	];
+	// let root = [
+	// 	{
+	// 		name: 'excel',
+	// 		size: '5 KB',
+	// 		files: [
+	// 			{
+	// 				name: 'sheet.xlsx',
+	// 				size: '5 KB'
+	// 			}
+	// 		]
+	// 	},
+	// 	{
+	// 		name: 'other',
+	// 		size: '3 MB',
+	// 		files: [
+	// 			{
+	// 				name: 'logs',
+	// 				size: '1.3 MB',
+	// 				files: [
+	// 					{
+	// 						name: 'errors.log',
+	// 						size: '31 KB'
+	// 					},
+	// 					{
+	// 						name: 'latest.log',
+	// 						size: '1.2 MB'
+	// 					}
+	// 				]
+	// 			},
+	// 			{
+	// 				name: 'pics',
+	// 				size: '1 MB',
+	// 				files: [
+	// 					{ name: 'img.gif', size: '32 KB' },
+	// 					{ name: 'logo.png', size: '875 KB' }
+	// 				]
+	// 			},
+	// 			{ name: 'text.txt', size: '2 KB' },
+	// 			{ name: 'archive.tar.gz', size: '7 KB' },
+	// 			{ name: 'script.pdf', size: '1.3 MB' }
+	// 		]
+	// 	},
+	// 	{ name: 'TODO.md', size: '6 KB' }
+	// ];
+	onMount(() => {
+		try {
+			loadListOfFiles();
+			updateFSInfo();
+		} catch (error) {
+			console.log(error);
+		}
+	});
 </script>
 
 <main class="flex-col">
@@ -58,8 +70,13 @@
 	</div>
 
 	<div class="flex flex-col">
-		<div class="w-5/6 m-auto border-r">
-			<Folder name="" size="" files={root} path="" />
+		<div class="w-5/6 m-auto">
+			<div class="flex flex-col py-4">
+				<AvailableSpaceBar />
+			</div>
+			<div class="flex flex-col border-r">
+				<Folder name="" size="" files={$FS} path="" />
+			</div>
 		</div>
 		<div class="flex grow" />
 		<div class="flex flex-col p-3 items-center pt-10">

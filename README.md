@@ -12,6 +12,7 @@ The ESP File Server creates an easy way to manage filesystems on the ESP32 and b
  - [ ] Delete files
  - [x] Rename files and folders by double clicking
  - [ ] Create new files and folders
+ - [x] Status bar with used and free space
  - [ ] Preview files
  - [ ] Format the filesystem
 
